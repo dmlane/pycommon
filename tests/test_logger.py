@@ -1,14 +1,14 @@
 """ Test the logger module"""
 
-import datetime
 import os
 import shutil
 import time
 
 import pytest
 from appdirs import user_log_dir
+from logger import get_logger
 
-from pycommon.logger import get_logger
+from pycommon.my_config import config
 
 APP_NAME = "net.dmlane.test"
 AUTHOR = "dave"
@@ -20,6 +20,8 @@ LOG_NAME = "test_logger.log"
 def run_before_and_after_tests():
     """Fixture to execute asserts before and after a test is run"""
     # Setup: fill with any logic you want
+    config.common.log_directory = LOG_DIR
+    config.common.isatty = False
     shutil.rmtree(LOG_DIR, ignore_errors=True)
     yield  # this is where the testing happens
     shutil.rmtree(LOG_DIR, ignore_errors=True)
@@ -32,9 +34,9 @@ def test_log_created():
     logger = get_logger(
         name="test_logger",
         file_name=LOG_NAME,
-        app_name=APP_NAME,
-        author=AUTHOR,
-        log_level="INFO",
+        # app_name=APP_NAME,
+        # author=AUTHOR,
+        # log_level="INFO",
     )
     logger.info("test1234")
     assert os.path.exists(os.path.join(user_log_dir(APP_NAME, AUTHOR), LOG_NAME))
@@ -48,14 +50,14 @@ def test_log_cleanup():
     logger = get_logger(
         name="test_logger",
         file_name=LOG_NAME,
-        app_name=APP_NAME,
+        # app_name=APP_NAME,
         when="S",
         backup_count=BACKUP_COUNT,
-        author=AUTHOR,
-        log_level="INFO",
+        # author=AUTHOR,
+        # log_level="INFO",
     )
     for msg in range(1, (BACKUP_COUNT * 8)):
-        logger.info("test1234")
+        logger.info("test1234 .... %3d", msg)
         time.sleep(0.5)
     num_logs = 0
     for file_name in os.listdir(LOG_DIR):

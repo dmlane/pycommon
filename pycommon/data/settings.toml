@@ -1,0 +1,5 @@
+[common]
+#log_location = # Uncomment this to define a non-standard log location
+log_author = "dave"
+log_app_name = "dmlane.net"
+

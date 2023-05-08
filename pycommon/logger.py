@@ -1,14 +1,19 @@
-""" Setup logging"""
+""" Setup logging:
+    - Log file rotates every midnight by default
+    - Lines are split at 88 with subsequent indent characters
+    - Log level is set to INFO
+    - Console logger setup if we are on a tty
+    - Continuation lines are also prefixed
+    - Newlines caused by linefeeds are also prefixed
+"""
 import logging
 import os
-import sys
 import textwrap
 from logging.handlers import TimedRotatingFileHandler
 
-import appdirs
-from settings import settings
+from pycommon import config
 
-__all__ = ["get_logger"]
+# __all__ = ["get_logger"]
 
 
 class NewLineFormatter(logging.Formatter):
@@ -18,13 +23,11 @@ class NewLineFormatter(logging.Formatter):
     - Indent lines after the first line by indent characters
     """
 
-    def __init__(self, fmt, date_format=None, indent: int = 4, max_width: int = 88):
+    def __init__(self, fmt, date_format=None):
         """
         Init given the log line format and date format
         """
         logging.Formatter.__init__(self, fmt, date_format)
-        self.dml_indent = indent
-        self.dml_max_width = max_width
 
     def format(self, record):
         """Override format function"""
@@ -40,11 +43,11 @@ class NewLineFormatter(logging.Formatter):
                     # We do this so that textwrap has consistent size on each line
                     this_line = this_line[len(parts[0]) :]
                 else:
-                    this_line = " " * self.dml_indent + this_line
+                    this_line = " " * config.common.log_indent + this_line
                 wrapped_lines = textwrap.wrap(
                     this_line,
-                    width=self.dml_max_width,
-                    subsequent_indent=" " * self.dml_indent,
+                    width=config.common.log_max_width,
+                    subsequent_indent=" " * config.common.log_indent,
                 )
                 s_arr[sub] = "\n".join(wrapped_lines)
             # Put everything back together
@@ -58,46 +61,35 @@ class NewLineFormatter(logging.Formatter):
 
 
 # noinspection SpellCheckingInspection
-# pylint: disable=too-many-arguments
 def get_logger(
     file_name: str,
     name: str,
-    log_level: str = "INFO",
-    indent: int = 4,
-    max_width: int = 88,
     backup_count: int = 7,
     when: str = "midnight",
     interval: int = 1,
-    app_name: str = "net.dmlane",
-    author: str = "dave",
-    # stdout: bool = True,
 ) -> logging.Logger:
-    # pylint: disable=too-many-locals
     """Return a logger with a given name and level."""
-    log_directory = appdirs.user_log_dir(app_name, author)
-    os.makedirs(log_directory, exist_ok=True)
-    log_name = log_directory + "/" + file_name
+    os.makedirs(config.common.log_directory, exist_ok=True)
+    log_name = os.path.join(config.common.log_directory, file_name)
     file_handler = TimedRotatingFileHandler(
         log_name, when=when, interval=interval, backupCount=backup_count, utc=True
     )
     formatter = NewLineFormatter(
         "%(asctime)s %(levelname)s:%(name)s %(message)s",
         "%Y-%m-%d %H:%M:%S",
-        indent=indent,
-        max_width=max_width,
     )
-    file_handler.setLevel(log_level)
+    file_handler.setLevel(config.common.log_level)
 
     file_handler.setFormatter(formatter)
     logger = logging.getLogger(name)
     logger.addHandler(file_handler)
-    logger.setLevel(log_level)
+    logger.setLevel(config.common.log_level)
     # And a screen handler if we are interactive (PyCharm doesn't show as a tty)
-    if sys.stdout.isatty() or "PYCHARM_HOSTED" in os.environ:
+    if config.common.isatty:
         console_formatter = NewLineFormatter("%(name)s: %(message)s")
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(console_formatter)
 
-        console_handler.setLevel(log_level)
+        console_handler.setLevel(config.common.log_level)
         logger.addHandler(console_handler)
     return logger

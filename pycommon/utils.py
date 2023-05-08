@@ -15,6 +15,7 @@ __all__ = (
     "get_dvd_path",
     "housekeeping_cleanup",
     "touch",
+    "Struct",
 )
 
 
@@ -63,15 +64,6 @@ def touch(fname, timestamp=None):
             os.utime(handle.fileno(), (epoch_seconds, epoch_seconds))
 
 
-# touch("/tmp/dml_housekeeping.flag", datetime.timedelta(days=1))
-# touch("/tmp/dml_housekeeping.flag2", datetime.datetime(2020, 1, 1, 12, 30, 0))
-# touch("/tmp/dml_housekeeping.flag3")
-# housekeeping_cleanup(
-#     "ripdvd",
-#     "/Users/dave/Library/Caches/net.dmlane/ripdvd",
-#     file_pattern="*.pickle",
-#     max_age=4,
-# )
 def dict_merge(dct, merge_dct):
     """Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
     updating only top-level keys, dict_merge recurses down into dicts nested
@@ -81,8 +73,19 @@ def dict_merge(dct, merge_dct):
     :param merge_dct: dct merged into dct
     :return: None
     """
-    for k, v in merge_dct.items():
-        if k in dct and isinstance(dct[k], dict) and isinstance(merge_dct[k], dict):  # noqa
-            dict_merge(dct[k], merge_dct[k])
+    for key, _ in merge_dct.items():
+        if key in dct and isinstance(dct[key], dict) and isinstance(merge_dct[key], dict):  # noqa
+            dict_merge(dct[key], merge_dct[key])
         else:
-            dct[k] = merge_dct[k]
+            dct[key] = merge_dct[key]
+
+
+class Struct:  # pylint: disable=too-few-public-methods
+    """Lets you convert from a dictionary to a struct."""
+
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            if isinstance(value, dict):
+                self.__dict__[key] = Struct(**value)
+            else:
+                self.__dict__[key] = value
