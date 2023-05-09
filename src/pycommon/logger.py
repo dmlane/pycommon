@@ -11,7 +11,7 @@ import os
 import textwrap
 from logging.handlers import TimedRotatingFileHandler
 
-from pycommon import config
+from pycommon.my_config import config
 
 # __all__ = ["get_logger"]
 

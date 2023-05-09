@@ -21,5 +21,6 @@ def test_run_fail():
 
 
 def test_elapsed_time_set():
+    """Test elapsed_time is set correctly"""
     result = run(["true"])
     assert re.match(r"^\d\d:\d\d:\d\d$", result.elapsed_time)

@@ -12,7 +12,9 @@ class CompletedProcessExt(CompletedProcess):  # pylint: disable=too-few-public-m
     just added the elapsed_time attribute to the CompletedProcess class, but that would
     mean pylint errors everywhere we access it."""
 
-    def __init__(self, elapsed_time: str, parent: CompletedProcess):
+    def __init__(
+        self, elapsed_time: str, parent: CompletedProcess
+    ):  # pylint: disable=super-init-not-called
         # We DELIBERATELY do not call super().__init__() here -
         # we get the data from "parent" explicitly
         self.elapsed_time = elapsed_time

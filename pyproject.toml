@@ -1,24 +1,45 @@
 [tool.poetry]
 name = "pycommon"
-version = "2023.1.1000"
+version = "2023.1.1000"		# Published version is managed BY bumper
 description = "Common python modules I use in different projects"
-authors = ["David Lane <cheery.koala5370@fastmail.com>"]
+authors = ["Dave Lane <cheery.koala5370@fastmail.com>"]
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/dmlane/pycommon"
+include = [
+   { path = 'LICENSE', format = 'sdist' },
+   { path = 'README.md', format = 'sdist' },
+   { path = 'docs', format = 'sdist' },
+   { path = 'tests', format = 'sdist' },
+]
+packages = [
+   { include = "pycommon", from = "src" },
+]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<4"
 appdirs = "^1.4.4"
 pyqt6 = "^6.5.0"
 psutil = "^5.9.5"
 tvdb-v4-official = "^1.1.0"
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.3.1"
-pylint = "^2.17.2"
-mypi = "^0.0.3"
-pre-commit = "^3.3.1"
+[tool.poetry.group.docs]
+optional = true
 
+[tool.poetry.group.docs.dependencies]
+myst-parser = ">=0.16"
+sphinx = ">=4.0"
+sphinx-autobuild = ">=2021.0"
+sphinx-rtd-theme = ">=1.0"
+
+[tool.poetry.group.dev.dependencies]
+black = ">=23.3.0"
+bumpver = ">=2022.1120"
+isort = ">=5.12.0"
+mypy = ">=1.2.0"
+pre-commit = ">=3.3.1"
+pylint = ">=2.17.2"
+pytest = ">=7.3.1"
 
 [[tool.poetry.source]]
 name = "repositories.fury"
@@ -29,6 +50,7 @@ secondary = true
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
 [tool.bumpver]
 current_version = "2023.1.1000"
 version_pattern = "YYYY.MM.BUILD"
@@ -42,9 +64,10 @@ push = true
     'current_version = "{version}"',
     'version = "{version}"',
 ]
+
 [tool.black]
 line_length = 100
-target-version = ['py38', 'py39', 'py310', 'py311' ]
+target-version = ['py311']
 
 [tool.isort]
 profile = "black"

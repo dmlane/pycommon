@@ -9,6 +9,8 @@ import appdirs
 import tomlkit
 import utils
 
+from pycommon.utils import Struct
+
 CONFIG_DIR = appdirs.user_config_dir("dmlane", "dave")
 CONFIG_FILE = os.path.join(CONFIG_DIR, "settings.toml")
 DEFAULT_CONFIG_DIR = str(resources.files("pycommon")) + "/data"
@@ -89,6 +91,7 @@ class MyConfig:  # pylint: disable=too-few-public-methods
 
 
 _config = MyConfig()
-config = _config.all_settings
+config = Struct(**_config.all_settings)
+print(config)
 # print(config)
 # config.create_settings_file()
