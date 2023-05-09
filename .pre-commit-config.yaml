@@ -2,8 +2,20 @@ fail_fast: true
 repos:
   - repo: local
     hooks:
-      - id: system
-        name: Code Style Checks
-        entry: ./run checks
-        pass_filenames: false
+      - id: pylint
+        name: pylint
+        entry: pylint
         language: system
+        types: [python]
+        args:
+          [
+            "-rn", # Only display messages
+          #  "-sn", # Don't display the score
+            "--rcfile=/Users/dave/dev/pycommon/.pylintrc", # Link to your config file
+          ]
+#      - id: system
+#        name: Code Style Checks
+#        types: [python]
+#        entry: ./pre-commit.sh
+#        pass_filenames: false
+#        language: system
