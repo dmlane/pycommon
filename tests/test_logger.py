@@ -8,7 +8,7 @@ import pytest
 from appdirs import user_log_dir
 from logger import get_logger
 
-from pycommon.my_config import config
+from pycommon.my_settings import config
 
 APP_NAME = "net.dmlane.test"
 AUTHOR = "dave"
@@ -20,8 +20,8 @@ LOG_NAME = "test_logger.log"
 def run_before_and_after_tests():
     """Fixture to execute asserts before and after a test is run"""
     # Setup: fill with any logic you want
-    config.common.log_directory = LOG_DIR
-    config.common.isatty = False
+    config._log_directory = LOG_DIR  # pylint: disable=protected-access
+    config._isatty = False  # pylint: disable=protected-access
     shutil.rmtree(LOG_DIR, ignore_errors=True)
     yield  # this is where the testing happens
     shutil.rmtree(LOG_DIR, ignore_errors=True)
@@ -31,15 +31,10 @@ def run_before_and_after_tests():
 
 def test_log_created():
     """Tests that the logfile and its parent folder is created correctly"""
-    logger = get_logger(
-        name="test_logger",
-        file_name=LOG_NAME,
-        # app_name=APP_NAME,
-        # author=AUTHOR,
-        # log_level="INFO",
-    )
+    logger = get_logger(name="test_logger", file_name=LOG_NAME)
     logger.info("test1234")
-    assert os.path.exists(os.path.join(user_log_dir(APP_NAME, AUTHOR), LOG_NAME))
+    path = os.path.join(LOG_DIR, LOG_NAME)
+    assert os.path.exists(path), f"Expected to find directory {path}"
 
 
 BACKUP_COUNT = 2

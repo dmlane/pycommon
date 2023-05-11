@@ -27,7 +27,7 @@ py_files=$(git diff --cached --name-only --diff-filter=ACM |grep '.py$')
 test -z "$py_files" && exit 0
 
 echo -e "${YELLOW}Checking the following python files for problems:${NC}"
-echo -e "$GREEN$(fold -w 76 -s <<<$py_files|sed 's/^/    /')${NC}"
+echo -e "$GREEN$$(sed 's/^/    /' <<< $py_files)${NC}"
 
 run_check black --check 
 run_check isort --check-only 

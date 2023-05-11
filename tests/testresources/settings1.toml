@@ -2,7 +2,7 @@
 #log_location = # Uncomment this to define a non-standard log location
 log_author = "dave"
 log_app_name = "dmlane.net"
-log_indent = 4
-log_max_width = 88
+log_indent = 3
+log_max_width = 120
 
 

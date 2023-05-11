@@ -19,6 +19,7 @@ __all__ = (
 )
 
 
+# noinspection SpellCheckingInspection
 def eject_dvd():
     """Eject dvd"""
     os.system("drutil eject")
@@ -48,11 +49,11 @@ def housekeeping_cleanup(folder: str, file_pattern: str, max_age: int = 7):
     touch(flag)
 
 
-def touch(fname, timestamp=None):
+def touch(file_name, timestamp=None):
     """Creates a file if it doesn't exist and touches it with the given timestamp.
     Timestamp can be a datetime.timedelta or datetime.datetime object
     """
-    with open(fname, "a", encoding="utf-8") as handle:
+    with open(file_name, "a", encoding="utf-8") as handle:
         if timestamp is not None:
             if isinstance(timestamp, datetime.timedelta):
                 new_time = datetime.datetime.utcnow() - timestamp
@@ -89,3 +90,23 @@ class Struct:  # pylint: disable=too-few-public-methods
                 self.__dict__[key] = Struct(**value)
             else:
                 self.__dict__[key] = value
+
+    def __repr__(self):
+        return self.__recursive_repr(0, self)
+
+    def __recursive_repr(self, indent, param):
+        result = ""
+        for attr in dir(param):
+            if callable(getattr(param, attr)) or attr.startswith("__") or attr == "self":
+                continue
+            if isinstance(getattr(param, attr), Struct):
+                result = (
+                    result
+                    + " " * indent
+                    + attr
+                    + "\n"
+                    + self.__recursive_repr(indent + 2, getattr(param, attr))
+                )
+            else:
+                result = result + " " * indent + attr + "=" + str(getattr(param, attr)) + "\n"
+        return result
