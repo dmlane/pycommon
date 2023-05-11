@@ -37,7 +37,8 @@ command_pytest() {
          run_command openfile .htmlcov/index.html
       fi
    else
-      poetry_run pytest --testdox --force-testdox $color tests
+      #poetry_run pytest --testdox --force-testdox $color tests
+      poetry_run pytest $color tests
    fi
 }
 
