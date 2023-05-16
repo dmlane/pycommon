@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pycommon"
-version = "2023.1.1000"		# Published version is managed BY bumper
+version = "2023.5.1001"		# Published version is managed BY bumper
 description = "Common python modules I use in different projects"
 authors = ["Dave Lane <cheery.koala5370@fastmail.com>"]
 license = "MIT"
@@ -50,7 +50,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.bumpver]
-current_version = "2023.1.1000"
+current_version = "2023.5.1001"
 version_pattern = "YYYY.MM.BUILD"
 commit_message = "bump version {old_version} -> {new_version}"
 commit = true
